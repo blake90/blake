@@ -7,7 +7,8 @@
 This module updates the userbot based on Upstream revision
 """
 
-from os import remove
+from os import remove, execl
+import sys
 
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError, NoSuchPathError
@@ -92,19 +93,18 @@ async def upstream(ups):
             return
 
         await ups.edit('`New update found, updating...`')
-
-        try:
-            ups_rem.pull(ac_br)
-            await ups.edit(
-                '`Successfully Updated without casualties\nBot is switching off now.. restart kthx`'
-            )
-            await ups.client.disconnect()
-        except GitCommandError:
-            ups_rem.git.reset('--hard')
-            await ups.edit(
-                '`Successfully Updated with casualties\nBot is switching off now.. restart kthx`'
-            )
-            await ups.client.disconnect()
+        ups_rem.fetch(ac_br)
+        ups_rem.git.reset('--hard','FETCH_HEAD')
+        await ups.edit(
+            '`Successfully Updated!\n'
+            'Bot is restarting... Wait for a second!`'
+        )
+        await ups.client.disconnect()
+        # Spin a new instance of bot
+        execl(sys.executable, sys.executable, *sys.argv)
+        # Shut the existing one down
+        exit()
+        
 
 
 CMD_HELP.update({
