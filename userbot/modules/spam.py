@@ -31,6 +31,8 @@ async def spammer(e):
     if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
         message = e.text
         counter = int(message[6:8])
+        if counter > 99:
+            return
         spam_message = str(e.text[8:])
         await asyncio.wait([e.respond(spam_message) for i in range(counter)])
         await e.delete()
@@ -46,6 +48,8 @@ async def bigspam(e):
     if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
         message = e.text
         counter = int(message[9:13])
+        if (counter < 99) or (counter > 9999):
+            return
         spam_message = str(e.text[13:])
         for i in range(1, counter):
             await e.respond(spam_message)
@@ -81,7 +85,11 @@ async def spammer(e):
     if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
         message = e.text
         spamDelay = float(message[11:15])
+        if spamDelay > 9999:
+            return
         counter = int(message[15:19])
+        if counter > 9999:
+            return
         spam_message = str(e.text[19:])
         from userbot.events import register
         for i in range(1, counter):
@@ -100,8 +108,10 @@ CMD_HELP.update({
 \nUsage: Spam the text letter by letter.\
 \n\n.spam <count> <text>\
 \nUsage: Your regular spammer stuff :P\
+\nNOTE: Limit for <count> is 1 - 99.\
 \n\n.bigspam <count> <text>\
 \nUsage: .spam on steroids !!\
+\nNOTE: Limit for <count> is 100 - 9999.\
 \n\n.picspam <count> <link>\
 \nUsage: As if text spam was not enough !!\
 \n\n.delayspam <delay> <count> <text>\
