@@ -9,6 +9,8 @@
 
 from random import randint
 from time import sleep
+from os import execl
+import sys
 import os
 import sys
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
@@ -55,16 +57,19 @@ async def killdabot(event):
         await event.client.disconnect()
 
 @register(outgoing=True, pattern="^.restart$")
-async def revivedabot(restart):
-    """ For .restart command, restart the bot down."""
-    if not restart.text[0].isalpha() and restart.text[0] not in ("/", "#", "@", "!"):
-        # Copyright(c) Kandnub | 2019
-        await restart.edit("`BRB... *PornHub intro*`")
-        await restart.client.disconnect()
-        # https://archive.is/im3rt
-        os.execl(sys.executable, sys.executable, *sys.argv)
-        # You probably don't need it but whatever
-        quit()
+async def killdabot(event):
+    if not event.text[0].isalpha() and event.text[0] not in ("/", "#", "@", "!"):
+        await event.edit("`BRB... *PornHub intro*`")
+        if BOTLOG:
+            await event.client.send_message(
+                BOTLOG_CHATID,
+                "#RESTART \n"
+                "Bot Restarted")
+        await event.client.disconnect()
+        # Spin a new instance of bot
+        execl(sys.executable, sys.executable, *sys.argv)
+        # Shut the existing one down
+        exit()
 
 @register(outgoing=True, pattern="^.community$")
 async def bot_community(community):
