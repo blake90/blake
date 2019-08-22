@@ -11,10 +11,10 @@ from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.types import MessageEntityMentionName
 
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot
-from userbot.events import register
-
+from userbot.events import register, errors_handler
 
 @register(outgoing=True, pattern="^.userid$")
+@errors_handler
 async def useridgetter(target):
     """ For .userid command, returns the ID of the target user. """
     if not target.text[0].isalpha() and target.text[0] not in ("/", "#", "@", "!"):
@@ -40,34 +40,57 @@ async def useridgetter(target):
 
 
 @register(outgoing=True, pattern="^.chatid$")
+@errors_handler
 async def chatidgetter(chat):
     """ For .chatid, returns the ID of the chat you are in at that moment. """
     if not chat.text[0].isalpha() and chat.text[0] not in ("/", "#", "@", "!"):
         await chat.edit("Chat ID: `" + str(chat.chat_id) + "`")
 
 
-@register(outgoing=True, pattern="^.mention (.*)")
+@register(outgoing=True, pattern="^.mention(?: |$)(.*)")
+@errors_handler
 async def mention(event):
-    """ For .chatid, returns the ID of the chat you are in at that moment. """
+    """ For .mention, generates a permalink to a user's profile with custom caption. """
     if not event.text[0].isalpha() and event.text[0] not in ("/", "#", "@", "!"):
         if event.fwd_from:
             return
         input_str = event.pattern_match.group(1)
-        if event.reply_to_msg_id:
-            previous_message = await event.get_reply_message()
-            if previous_message.forward:
-                replied_user = previous_message.forward.from_id
-            else:
-                replied_user = previous_message.from_id
-        else:
-            return
-        user_id = replied_user
+        target, mention_text = input_str.split(' ', 1)
+        replied_user = await get_user(event)
+        user_id = replied_user.user.id
         caption = """<a href='tg://user?id={}'>{}</a>""".format(
-            user_id, input_str)
+            user_id, str(mention_text))
         await event.edit(caption, parse_mode="HTML")
 
+async def get_user(event, target):
+    """ Get the user from argument or replied message. """
+    if event.reply_to_msg_id:
+        previous_message = await event.get_reply_message()
+        replied_user = await event.client(GetFullUserRequest(previous_message.from_id))
+    else:
+        user = target
+
+        if user.isnumeric():
+            user = int(user)
+
+        if event.message.entities is not None:
+            probable_user_mention_entity = event.message.entities[0]
+
+            if isinstance(probable_user_mention_entity, MessageEntityMentionName):
+                user_id = probable_user_mention_entity.user_id
+                replied_user = await event.client(GetFullUserRequest(user_id))
+                return replied_user
+        try:
+            user_object = await event.client.get_entity(user)
+            replied_user = await event.client(GetFullUserRequest(user_object.id))
+        except (TypeError, ValueError) as err:
+            await event.edit(str(err))
+            return None
+
+    return replied_user
 
 @register(outgoing=True, pattern=r"^.log(?: |$)([\s\S]*)")
+@errors_handler
 async def log(log_text):
     """ For .log command, forwards a message or the command argument to the bot logs group """
     if not log_text.text[0].isalpha() and log_text.text[0] not in ("/", "#", "@", "!"):
@@ -90,6 +113,7 @@ async def log(log_text):
 
 
 @register(outgoing=True, pattern="^.kickme$")
+@errors_handler
 async def kickme(leave):
     """ Basically it's .kickme command """
     if not leave.text[0].isalpha() and leave.text[0] not in ("/", "#", "@", "!"):
@@ -98,7 +122,7 @@ async def kickme(leave):
 
 
 @register(outgoing=True, pattern="^.unmutechat$")
-
+@errors_handler
 async def unmute_chat(unm_e):
     """ For .unmutechat command, unmute a muted chat. """
     if not unm_e.text[0].isalpha() and unm_e.text[0] not in ("/", "#", "@", "!"):
@@ -112,6 +136,7 @@ async def unmute_chat(unm_e):
 
 
 @register(outgoing=True, pattern="^.mutechat$")
+@errors_handler
 async def mute_chat(mute_e):
     """ For .mutechat command, mute any chat. """
     if not mute_e.text[0].isalpha() and mute_e.text[0] not in ("/", "#", "@", "!"):
@@ -130,6 +155,7 @@ async def mute_chat(mute_e):
 
 
 @register(incoming=True)
+@errors_handler
 async def keep_read(message):
     """ The mute logic. """
     try:
@@ -155,6 +181,6 @@ CMD_HELP.update({
 \nUsage: Unmutes a muted chat.\
 \n\n.mutechat\
 \nUsage: Allows you to mute any chat.\
-\n\n.mention <text>\
-\nUsage: Reply to generate the user's permanent link with custom text."
+\n\n.mention <username> <text>\
+\nUsage: Generates the user's permanent link with custom text."
 })
