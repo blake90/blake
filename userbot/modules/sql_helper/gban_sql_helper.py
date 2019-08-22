@@ -15,7 +15,7 @@ class GBan(BASE):
 
 GBan.__table__.create(checkfirst=True)
 
-def get_gban(chat_id):
+def get_gban():
     try:
         return SESSION.query(GBan)
     finally:
