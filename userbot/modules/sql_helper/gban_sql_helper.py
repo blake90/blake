@@ -30,13 +30,13 @@ def is_gban(chat_id):
         SESSION.close()
 
 
-def approve(chat_id):
+def add_chat_gban(chat_id):
     adder = GBan(str(chat_id))
     SESSION.add(adder)
     SESSION.commit()
 
 
-def dissprove(chat_id):
+def remove_chat_gban(chat_id):
     rem = SESSION.query(GBan).get(str(chat_id))
     if rem:
         SESSION.delete(rem)
