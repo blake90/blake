@@ -4,18 +4,18 @@
 # you may not use this file except in compliance with the License.
 #
 
-from userbot import bot, CMD_HELP, is_mongo_alive, is_redis_alive
-from userbot.events import register, errors_handler
+from userbot import bot, CMD_HELP
+from userbot.events import register
 from telethon.tl.types import MessageEntityMentionName
-from userbot.modules.dbhelper import get_fban, add_chat_fban, remove_chat_fban,get_gban,add_chat_gban,remove_chat_gban
 import asyncio
 
 @register(outgoing=True, pattern="^.gban")
-@errors_handler
 async def gban_all(msg):
     if not msg.text[0].isalpha() and msg.text[0] not in ("/", "#", "@", "!"):
-        if not is_mongo_alive() or not is_redis_alive():
-            await msg.edit("`Database connections failing!`")
+        try:
+            from userbot.modules.sql_helper.gban_sql_helper import get_gban
+        except AttributeError:
+            await msg.edit("`Running on Non-SQL mode!`")
             return
         textx = await msg.get_reply_message()
         if textx:
@@ -71,11 +71,12 @@ async def gban_all(msg):
 
 
 @register(outgoing=True, pattern="^.fban")
-@errors_handler
 async def fedban_all(msg):
     if not msg.text[0].isalpha() and msg.text[0] not in ("/", "#", "@", "!"):
-        if not is_mongo_alive() or not is_redis_alive():
-            await msg.edit("`Database connections failing!`")
+        try:
+            from userbot.modules.sql_helper.fban_sql_helper import get_fban
+        except AttributeError:
+            await msg.edit("`Running on Non-SQL mode!`")
             return
         textx = await msg.get_reply_message()
         if textx:
@@ -154,20 +155,22 @@ async def fedban_all(msg):
 
 
 @register(outgoing=True, pattern="^.addfban")
-@errors_handler
 async def add_to_fban(chat):
-    if not is_mongo_alive() or not is_redis_alive():
-        await chat.edit("`Database connections failing!`")
+    try:
+        from userbot.modules.sql_helper.fban_sql_helper import add_chat_fban
+    except AttributeError:
+        await msg.edit("`Running on Non-SQL mode!`")
         return
     await add_chat_fban(chat.chat_id)
     await chat.edit("`Added this chat under the Fbanlist!`")
 
 
 @register(outgoing=True, pattern="^.addgban")
-@errors_handler
 async def add_to_gban(chat):
-    if not is_mongo_alive() or not is_redis_alive():
-        await chat.edit("`Database connections failing!`")
+    try:
+        from userbot.modules.sql_helper.gban_sql_helper import add_chat_gban
+    except AttributeError:
+        await msg.edit("`Running on Non-SQL mode!`")
         return
     await add_chat_gban(chat.chat_id)
     print(chat.chat_id)
@@ -175,20 +178,22 @@ async def add_to_gban(chat):
 
 
 @register(outgoing=True, pattern="^.removefban")
-@errors_handler
 async def remove_from_fban(chat):
-    if not is_mongo_alive() or not is_redis_alive():
-        await chat.edit("`Database connections failing!`")
+    try:
+        from userbot.modules.sql_helper.fban_sql_helper import remove_chat_fban
+    except AttributeError:
+        await msg.edit("`Running on Non-SQL mode!`")
         return
     await remove_chat_fban(chat.chat_id)
     await chat.edit("`Removed this chat from the Fbanlist!`")
 
 
 @register(outgoing=True, pattern="^.removegban")
-@errors_handler
 async def remove_from_gban(chat):
-    if not is_mongo_alive() or not is_redis_alive():
-        await chat.edit("`Database connections failing!`")
+    try:
+        from userbot.modules.sql_helper.gban_sql_helper import remove_chat_gban
+    except AttributeError:
+        await msg.edit("`Running on Non-SQL mode!`")
         return
     await remove_chat_gban(chat.chat_id)
     await chat.edit("`Removed this bot from the Gbanlist!`")
