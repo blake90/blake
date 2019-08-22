@@ -13,7 +13,7 @@ from telethon.events import StopPropagation
 from userbot import (COUNT_MSG, CMD_HELP, BOTLOG, BOTLOG_CHATID,
                      USERS, PM_AUTO_BAN)
 
-from userbot.events import register
+from userbot.events import register, errors_handler
 
 from userbot.modules.sql_helper.globals import gvarstatus, addgvar, delgvar
 from sqlalchemy.exc import IntegrityError
@@ -47,6 +47,7 @@ AFKSTR = [
 # =================================================================
 
 @register(incoming=True, disable_edited=True)
+@errors_handler
 async def mention_afk(mention):
     """ This function takes care of notifying the people who mention you that you are AFK."""
     global COUNT_MSG
@@ -83,7 +84,8 @@ async def mention_afk(mention):
                     COUNT_MSG = COUNT_MSG + 1
 
 
-@register(incoming=True, disable_edited=True)
+@register(incoming=True)
+@errors_handler
 async def afk_on_pm(sender):
     """ Function which informs people that you are AFK in PM """
     ISAFK = gvarstatus("AFK_STATUS")
@@ -145,6 +147,7 @@ async def set_afk(afk_e):
 
 
 @register(outgoing=True)
+@errors_handler
 async def type_afk_is_not_true(notafk):
     """ This sets your status as not afk automatically when you write something while being afk """
     ISAFK = gvarstatus("AFK_STATUS")
@@ -160,7 +163,7 @@ async def type_afk_is_not_true(notafk):
             str(COUNT_MSG) +
             " messages while you were away. Check log for more details.`"
         )
-        await sleep(4)
+        await sleep(2)
         await afk_info.delete()
         if BOTLOG:
             await notafk.client.send_message(
@@ -188,7 +191,6 @@ async def type_afk_is_not_true(notafk):
                 )
         COUNT_MSG = 0
         USERS = {}
-        delgvar("AFKREASON")
 
 CMD_HELP.update({
     "afk": ".afk [Optional Reason]\
