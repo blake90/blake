@@ -30,13 +30,13 @@ def is_fban(chat_id):
         SESSION.close()
 
 
-def approve(chat_id):
+def add_chat_fban(chat_id):
     adder = FBan(str(chat_id))
     SESSION.add(adder)
     SESSION.commit()
 
 
-def dissprove(chat_id):
+def remove_chat_fban(chat_id):
     rem = SESSION.query(FBan).get(str(chat_id))
     if rem:
         SESSION.delete(rem)
