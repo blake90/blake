@@ -15,7 +15,7 @@ class FBan(BASE):
 
 FBan.__table__.create(checkfirst=True)
 
-def get_fban(chat_id):
+def get_fban():
     try:
         return SESSION.query(FBan)
     finally:
