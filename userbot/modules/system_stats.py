@@ -172,7 +172,7 @@ async def amireallyalivereset(ureset):
     """ For .resetalive command, reset the username in the .alive command. """
     if not ureset.text[0].isalpha() and ureset.text[0] not in ("/", "#", "@", "!"):
         global DEFAULTUSER
-        DEFAULTUSER = uname().node
+        DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else uname().node
         await ureset.edit(
             "`"
             "Successfully reset user for alive!"
