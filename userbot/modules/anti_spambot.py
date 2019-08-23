@@ -138,8 +138,9 @@ async def ANTI_SPAMBOT(welcm):
                             "@admins\n"
                             "`ANTI SPAMBOT DETECTOR!\n"
                             "THIS USER MATCHES MY ALGORITHMS AS A SPAMBOT!`"
-                            f"REASON: {reason}")
-                            kicked = False
+                            f"REASON: {reason}"
+                        )
+                        kicked = False
                 else:
                     try:
                         await welcm.client(
@@ -157,8 +158,9 @@ async def ANTI_SPAMBOT(welcm):
                                 "@admins\n"
                                 "`ANTI SPAMBOT DETECTOR!\n"
                                 "THIS USER MATCHES MY ALGORITHMS AS A SPAMBOT!`"
-                                f"REASON: {reason}")
-                                kicked = False
+                                f"REASON: {reason}"
+                            )
+                            kicked = False
 
                 if BOTLOG:
                     if kicked:
