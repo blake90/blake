@@ -666,6 +666,12 @@ async def rm_deletedacc(show):
             \n**{del_a}** deleted admin accounts are not removed"
 
         await show.edit(del_status)
+        
+        if BOTLOG:
+            await show.client.send_message(
+                BOTLOG_CHATID,
+                "#CLEANUP\n"
+                f"Cleaned **{del_u}** deleted account(s) !!"
 
 
 @register(outgoing=True, pattern="^.adminlist$")
