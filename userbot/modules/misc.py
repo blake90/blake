@@ -81,7 +81,9 @@ async def killdabot(event):
 async def bot_community(community):
     """ For .support command, just returns the group link. """
     if not community.text[0].isalpha() and community.text[0] not in ("/", "#", "@", "!"):
-        await community.edit("Join the awesome Paperplane userbot community: @userbot_support\nBe warned that this is a fork of their project and you may get limited support for bugs.")
+        await community.edit("Join RaphielGang's awesome userbot community: @userbot_support"\
+                             "\nDo note that Paperplane Extended is an unoficial fork of their "\
+                             "Paperplane project and it may get limited or no support for bugs.")
 
 @register(outgoing=True, pattern="^.support$")
 @errors_handler
@@ -141,7 +143,7 @@ CMD_HELP.update({
 })
 CMD_HELP.update({
     "shutdown": ".shutdown\
-\nUsage: Sometimes you need to restart your bot. Sometimes you just hope to\
+\nUsage: Sometimes you need to shut down your bot. Sometimes you just hope to\
 hear Windows XP shutdown sound... but you don't."
 })
 CMD_HELP.update({
@@ -157,14 +159,18 @@ CMD_HELP.update({
 \nUsage: If you are curious what makes the userbot work, this is what you need.'
 })
 CMD_HELP.update({
-    "readme": "Read nibba READ !!"
+    "readme": ".readme\
+\nUsage: Provide links to setup the userbot and it's modules."
 })
 CMD_HELP.update({
-    "creator": "Know who created this awesome userbot !!"
+    "creator": ".creator\
+\nUsage: Know who created this awesome userbot !!"
 })
 CMD_HELP.update({
-    "repeat": ".repeat <no.> <text>\nRepeats a text number of times."
+    "repeat": ".repeat <no.> <text>\
+\nUsage: Repeats the text for a number of times. Don't confuse this with spam tho."
 })
 CMD_HELP.update({
-    "restart": "Restart the bot !!"
+    "restart": ".restart\
+\nUsage: Restart the bot !!"
 })
