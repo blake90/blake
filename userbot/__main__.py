@@ -18,7 +18,7 @@ CURSOR = DB.cursor()
 ALL_ROWS = CURSOR.fetchall()
 INVALID_PH = '\nERROR: The Phone No. entered is INVALID' \
              '\n Tip: Use Country Code along with number.' \
-             '\n      Recheck your Phone Number'
+             '\n or check your phone number and try again !'
 
 try:
     bot.start()
