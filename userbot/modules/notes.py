@@ -7,7 +7,7 @@
 """ Userbot module containing commands for keeping notes. """
 
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
-from userbot.events import register
+from userbot.events import register, errors_handler
 from telethon.tl import types
 from telethon import utils
 
@@ -16,6 +16,7 @@ TYPE_PHOTO = 1
 TYPE_DOCUMENT = 2
 
 @register(outgoing=True, pattern="^.notes$")
+@errors_handler
 async def notes_active(svd):
     """ For .saved command, list all of the notes saved in a chat. """
     if not svd.text[0].isalpha() and svd.text[0] not in ("/", "#", "@", "!"):
@@ -30,14 +31,15 @@ async def notes_active(svd):
         for note in notes:
             if message == "`There are no saved notes in this chat`":
                 message = "Notes saved in this chat:\n"
-                message += "🗒️ `{}`\n".format(note.keyword)
+                message += "- `#{}`\n".format(note.keyword)
             else:
-                message += "🗒️ `{}`\n".format(note.keyword)
+                message += "- `#{}`\n".format(note.keyword)
 
         await svd.edit(message)
 
 
 @register(outgoing=True, pattern=r"^.clear (.*)")
+@errors_handler
 async def remove_notes(clr):
     """ For .clear command, clear note with the given name."""
     if not clr.text[0].isalpha() and clr.text[0] not in ("/", "#", "@", "!"):
@@ -56,6 +58,7 @@ async def remove_notes(clr):
 
 
 @register(outgoing=True, pattern=r"^.save (.*)")
+@errors_handler
 async def add_filter(fltr):
     """ For .save command, saves notes in a chat. """
     if not fltr.text[0].isalpha() and fltr.text[0] not in ("/", "#", "@", "!"):
@@ -93,6 +96,7 @@ async def add_filter(fltr):
 
 
 @register(pattern=r"#\w*", disable_edited=True)
+@errors_handler
 async def incom_note(getnt):
     """ Notes logic. """
     try:
@@ -132,6 +136,7 @@ async def incom_note(getnt):
         pass
 
 @register(outgoing=True, pattern="^.rmnotes (.*)")
+@errors_handler
 async def kick_marie_notes(kick):
     """ For .rmfilters command, allows you to kick all \
         Marie(or her clones) filters from a chat. """
