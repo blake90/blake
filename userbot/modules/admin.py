@@ -672,6 +672,7 @@ async def rm_deletedacc(show):
                 BOTLOG_CHATID,
                 "#CLEANUP\n"
                 f"Cleaned **{del_u}** deleted account(s) !!"
+            )
 
 
 @register(outgoing=True, pattern="^.adminlist$")
