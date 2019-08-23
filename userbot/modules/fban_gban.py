@@ -5,11 +5,12 @@
 #
 
 from userbot import bot, CMD_HELP
-from userbot.events import register
+from userbot.events import register, errors_handler
 from telethon.tl.types import MessageEntityMentionName
 import asyncio
 
 @register(outgoing=True, pattern="^.gban")
+@errors_handler
 async def gban_all(msg):
     if not msg.text[0].isalpha() and msg.text[0] not in ("/", "#", "@", "!"):
         try:
@@ -71,6 +72,7 @@ async def gban_all(msg):
 
 
 @register(outgoing=True, pattern="^.fban")
+@errors_handler
 async def fedban_all(msg):
     if not msg.text[0].isalpha() and msg.text[0] not in ("/", "#", "@", "!"):
         try:
@@ -155,6 +157,7 @@ async def fedban_all(msg):
 
 
 @register(outgoing=True, pattern="^.addfban")
+@errors_handler
 async def add_to_fban(chat):
     try:
         from userbot.modules.sql_helper.fban_sql_helper import add_chat_fban
@@ -166,6 +169,7 @@ async def add_to_fban(chat):
 
 
 @register(outgoing=True, pattern="^.addgban")
+@errors_handler
 async def add_to_gban(chat):
     try:
         from userbot.modules.sql_helper.gban_sql_helper import add_chat_gban
@@ -178,6 +182,7 @@ async def add_to_gban(chat):
 
 
 @register(outgoing=True, pattern="^.removefban")
+@errors_handler
 async def remove_from_fban(chat):
     try:
         from userbot.modules.sql_helper.fban_sql_helper import remove_chat_fban
@@ -189,6 +194,7 @@ async def remove_from_fban(chat):
 
 
 @register(outgoing=True, pattern="^.removegban")
+@errors_handler
 async def remove_from_gban(chat):
     try:
         from userbot.modules.sql_helper.gban_sql_helper import remove_chat_gban
