@@ -70,7 +70,7 @@ async def locks(event):
 CMD_HELP.update({
     "locks": ".lock <type(s)>\
 \nUsage: Allows you to lock away some common message types in the chat.\
-\nNOTE: Requires admin rights in the chat !!\
+\n\nNOTE: Requires admin rights in the chat !!\
 \n\nAvailable message types to lock are: \
 \n`msg, media, sticker, gif, game, inline, poll, invite, pin, info`\
 "})
