@@ -1,14 +1,16 @@
-from telethon import events, functions, types
-import asyncio
+from telethon.tl.functions.channels import EditBannedRequest
+from telethon.tl.functions.messages import EditChatDefaultBannedRightsRequest
+from telethon.tl.types import ChatBannedRights
+
+from asyncio import sleep
 from userbot import bot
-# import datetime
+from userbot.events import register, errors_handler
 
 
-@bot.on(events.NewMessage(pattern=r"\.lock ?(.*)", outgoing=True))
-async def _(event):
+@register(outgoing=True, pattern=r"^.lock ?(.*)")
+@errors_handler
+async def locks(event):
     if not event.text[0].isalpha() and event.text[0] not in ("/", "#", "@", "!"):
-        if event.fwd_from:
-            return
         input_str = event.pattern_match.group(1)
         peer_id = event.chat_id
         msg = None
@@ -29,21 +31,20 @@ async def _(event):
             sticker = True
         if "gif" in input_str:
             gif = True
-        if "gamee" in input_str:
+        if "game" in input_str:
             gamee = True
-        if "ainline" in input_str:
+        if "inline" in input_str:
             ainline = True
-        if "gpoll" in input_str:
+        if "poll" in input_str:
             gpoll = True
-        if "adduser" in input_str:
+        if "invite" in input_str:
             adduser = True
-        if "cpin" in input_str:
+        if "pin" in input_str:
             cpin = True
-        if "changeinfo" in input_str:
+        if "info" in input_str:
             changeinfo = True
-        banned_rights=types.ChatBannedRights(
+        banned_rights=ChatBannedRights(
             until_date=None,
-            # view_messages=None,
             send_messages=msg,
             send_media=media,
             send_stickers=sticker,
@@ -56,13 +57,20 @@ async def _(event):
             change_info=changeinfo,
         )
         try:
-            result = await bot(functions.messages.EditChatDefaultBannedRightsRequest(
+            result = await event.client(EditChatDefaultBannedRightsRequest(
                 peer=peer_id,
                 banned_rights=banned_rights
             ))
-            # logger.info(result.stringify())
         except Exception as e:
             await event.edit(str(e))
         else:
-            await asyncio.sleep(5)
+            await sleep(5)
             await event.delete()
+
+CMD_HELP.update({
+    "locks": ".lock <type(s)>\
+\nUsage: Allows you to lock away some common message types in the chat.\
+\nNOTE: Requires admin rights in the chat !!\
+\n\nAvailable message types to lock are: \
+\n`msg, media, sticker, gif, game, inline, poll, invite, pin, info`\
+"})
