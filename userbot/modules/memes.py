@@ -1044,7 +1044,7 @@ async def bluetext(bt_e):
             )
 
 
-@register(outgoing=True, pattern=r"\.f (.*)")
+@register(outgoing=True, pattern=r"^.f (.*)")
 @errors_handler
 async def payf(e):
     if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
@@ -1084,7 +1084,7 @@ async def scam(event):
         await asyncio.sleep(60)
 
 
-@register(pattern='.type(?: |$)(.*)')
+@register(pattern=r".type(?: |$)(.*)", outgoing=True)
 @errors_handler
 async def typewriter(typew):
     """ Just a small command to make your keyboard become a typewriter! """

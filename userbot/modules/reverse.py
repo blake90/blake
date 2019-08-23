@@ -19,7 +19,7 @@ from telethon.tl.types import MessageMediaPhoto
 from PIL import Image
 
 from userbot import bot, CMD_HELP
-from userbot.events import register
+from userbot.events import register, errors_handler
 
 
 opener = urllib.request.build_opener()
@@ -28,6 +28,7 @@ opener.addheaders = [('User-agent', useragent)]
 
 
 @register(outgoing=True, pattern=r"^.reverse(?: |$)(\d*)")
+@errors_handler
 async def okgoogle(img):
     """ For .reverse command, Google search images and stickers. """
     if not img.text[0].isalpha() and img.text[0] not in ("/", "#", "@", "!"):
@@ -67,7 +68,7 @@ async def okgoogle(img):
                 return
 
             os.remove(name)
-            match = ParseSauce(fetchUrl + "&preferences?hl=en&fg=1#languages")
+            match = await ParseSauce(fetchUrl + "&preferences?hl=en&fg=1#languages")
             guess = match['best_guess']
             imgspage = match['similar_images']
 
@@ -81,7 +82,7 @@ async def okgoogle(img):
                 lim = img.pattern_match.group(1)
             else:
                 lim = 3
-            images = scam(match, lim)
+            images = await scam(match, lim)
             yeet = []
             for i in images:
                 k = requests.get(i)
@@ -95,7 +96,7 @@ async def okgoogle(img):
             await img.edit(f"[{guess}]({fetchUrl})\n\n[Visually similar images]({imgspage})")
 
 
-def ParseSauce(googleurl):
+async def ParseSauce(googleurl):
     """Parse/Scrape the HTML code for the info we want."""
 
     source = opener.open(googleurl).read()
@@ -118,7 +119,7 @@ def ParseSauce(googleurl):
 
     return results
 
-def scam(results, lim):
+async def scam(results, lim):
 
     single = opener.open(results['similar_images']).read()
     decoded = single.decode('utf-8')

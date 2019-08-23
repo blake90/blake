@@ -13,15 +13,14 @@ from os import remove
 from PIL import Image
 from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto
 from userbot import bot, CMD_HELP
-from userbot.events import register
+from userbot.events import register, errors_handler
 from telethon.tl.functions.messages import GetStickerSetRequest
 from telethon.tl.types import InputStickerSetID
 from telethon.tl.types import DocumentAttributeSticker
 
-PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break. \
-A pack can't have more than 120 stickers at the moment."
 
 @register(outgoing=True, pattern="^.kang")
+@errors_handler
 async def kang(args):
     """ For .kang command, kangs stickers or creates new ones. """
     if not args.text[0].isalpha() and args.text[0] not in ("/", "#", "@", "!"):
@@ -111,7 +110,7 @@ async def kang(args):
                     await bot.send_read_acknowledge(conv.chat_id)
                     await conv.send_message(packname)
                     x = await conv.get_response()
-                    while x.text == PACK_FULL:
+                    while "120" in x.text:
                         pack += 1
                         packname = f"a{user.id}_by_{user.username}_{pack}"
                         packnick = f"@{user.username}'s kang pack Vol.{pack}"
@@ -168,7 +167,7 @@ async def kang(args):
                         await conv.send_file(file, force_document=True)
                     rsp = await conv.get_response()
                     if "Sorry, the file type is invalid." in rsp.text:
-                        await args.edit("Failed to add sticker,use @Stickers bot.")
+                        await args.edit("Failed to add sticker, use @Stickers bot to add the sticker manually.")
                         return
                     await conv.send_message(emoji)
                     # Ensure user doesn't get spamming notifications

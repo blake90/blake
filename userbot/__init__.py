@@ -102,6 +102,11 @@ YOUTUBE_API_KEY = os.environ.get(
     "YOUTUBE_API_KEY", None
     )
 
+# Default .alive name
+ALIVE_NAME = os.environ.get(
+    "ALIVE_NAME", None
+    )
+
 # Clean Welcome
 CLEAN_WELCOME = sb(os.environ.get(
     "CLEAN_WELCOME", "True"

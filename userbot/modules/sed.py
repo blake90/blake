@@ -11,17 +11,17 @@
 import re
 from sre_constants import error as sre_err
 from userbot import CMD_HELP
-from userbot.events import register
+from userbot.events import register, errors_handler
 
 DELIMITERS = ("/", ":", "|", "_")
 
 
-def separate_sed(sed_string):
+async def separate_sed(sed_string):
     """ Separate sed arguments. """
-    
+
     if len(sed_string) < 2:
         return
-    
+
     if (
             len(sed_string) >= 2 and
             sed_string[2] in DELIMITERS and
@@ -69,10 +69,11 @@ def separate_sed(sed_string):
 
 
 @register(outgoing=True, pattern="^.s")
+@errors_handler
 async def sed(command):
     if not command.text[0].isalpha() and command.text[0] not in ("/", "#", "@", "!"):
         """ For sed command, use sed on Telegram. """
-        sed_result = separate_sed(command.text)
+        sed_result = await separate_sed(command.text)
         textx = await command.get_reply_message()
         if sed_result:
             if textx:

@@ -33,12 +33,13 @@ from pytube import YouTube
 from pytube.helpers import safe_filename
 
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, YOUTUBE_API_KEY, CHROME_DRIVER, GOOGLE_CHROME_BIN
-from userbot.events import register
+from userbot.events import register, errors_handler
 
 CARBONLANG = "auto"
 LANG = "en"
 
 @register(outgoing=True, pattern="^.crblang")
+@errors_handler
 async def setlang(prog):
     if not prog.text[0].isalpha() and prog.text[0] not in ("/", "#", "@", "!"):
         global CARBONLANG
@@ -46,6 +47,7 @@ async def setlang(prog):
         await prog.edit(f"language set to {CARBONLANG}")
 
 @register(outgoing=True, pattern="^.carbon")
+@errors_handler
 async def carbon_api(e):
  if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
    """ A Wrapper for carbon.now.sh """
@@ -100,6 +102,7 @@ async def carbon_api(e):
    await e.delete() # Deleting msg
 
 @register(outgoing=True, pattern="^.img (.*)")
+@errors_handler
 async def img_sampler(event):
     """ For .img command, search and return images matching the query. """
     if not event.text[0].isalpha() and event.text[0] not in ("/", "#", "@", "!"):
@@ -130,6 +133,7 @@ async def img_sampler(event):
         await event.delete()
 
 @register(outgoing=True, pattern="^.currency (.*)")
+@errors_handler
 async def _(event):
     if not event.text[0].isalpha() and event.text[0] not in ("/", "#", "@", "!"):
         if event.fwd_from:
@@ -159,6 +163,7 @@ async def _(event):
 
 
 @register(outgoing=True, pattern=r"^.search (.*)")
+@errors_handler
 async def gsearch(q_event):
     """ For .google command, do a Google search. """
     if not q_event.text[0].isalpha() and q_event.text[0] not in (
@@ -167,18 +172,18 @@ async def gsearch(q_event):
         match = quote_plus(match_)
         plain_txt = get(f"https://www.startpage.com/do/search?cmd=process_search&query={match}", 'html').text
         soup = BeautifulSoup(plain_txt, "lxml")
-        
+
         msg = ""
         for result in soup.find_all('a', {'class': 'w-gl__result-title'}):
             title = result.text
             link = result.get('href')
             msg += f"{title}{link}\n"
-            
+
         await q_event.edit(
             "**Search Query:**\n`" + match_ + "`\n\n**Results:**\n" + msg,
             link_preview = False
         )
-        
+
         if BOTLOG:
             await q_event.client.send_message(
                 BOTLOG_CHATID,
@@ -186,6 +191,7 @@ async def gsearch(q_event):
             )
 
 @register(outgoing=True, pattern=r"^.wiki (.*)")
+@errors_handler
 async def wiki(wiki_q):
     """ For .google command, fetch content from Wikipedia. """
     if not wiki_q.text[0].isalpha() and wiki_q.text[0] not in ("/", "#", "@", "!"):
@@ -223,6 +229,7 @@ async def wiki(wiki_q):
 
 
 @register(outgoing=True, pattern="^.ud (.*)")
+@errors_handler
 async def urban_dict(ud_e):
     """ For .ud command, fetch content from Urban Dictionary. """
     if not ud_e.text[0].isalpha() and ud_e.text[0] not in ("/", "#", "@", "!"):
@@ -279,6 +286,7 @@ async def urban_dict(ud_e):
 
 
 @register(outgoing=True, pattern=r"^.tts(?: |$)([\s\S]*)")
+@errors_handler
 async def text_to_speech(query):
     """ For .tts command, a wrapper for Google Text-to-Speech. """
     if not query.text[0].isalpha() and query.text[0] not in ("/", "#", "@", "!"):
@@ -326,6 +334,7 @@ async def text_to_speech(query):
 
 #kanged from Blank-x ;---;
 @register(outgoing=True, pattern="^.imdb (.*)")
+@errors_handler
 async def imdb(e):
     if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
         try:
@@ -407,6 +416,7 @@ async def imdb(e):
             await e.edit("Plox enter **Valid movie name** kthx")
 
 @register(outgoing=True, pattern=r"^.trt(?: |$)([\s\S]*)")
+@errors_handler
 async def translateme(trans):
     """ For .trt command, translate the given text using Google Translate. """
     if not trans.text[0].isalpha() and trans.text[0] not in ("/", "#", "@", "!"):
@@ -440,6 +450,7 @@ async def translateme(trans):
 
 
 @register(pattern=".lang (.*)", outgoing=True)
+@errors_handler
 async def lang(value):
     """ For .lang command, change the default langauge of userbot scrapers. """
     if not value.text[0].isalpha() and value.text[0] not in ("/", "#", "@", "!"):
@@ -453,6 +464,7 @@ async def lang(value):
 
 
 @register(outgoing=True, pattern="^.yt (.*)")
+@errors_handler
 async def yt_search(video_q):
     """ For .yt command, do a YouTube search from Telegram. """
     if not video_q.text[0].isalpha() and video_q.text[0] not in ("/", "#", "@", "!"):
@@ -518,6 +530,7 @@ def youtube_search(
 
 
 @register(outgoing=True, pattern=r".yt_dl (\S*) ?(\S*)")
+@errors_handler
 async def download_video(v_url):
     """ For .yt_dl command, download videos from YouTube. """
     if not v_url.text[0].isalpha() and v_url.text[0] not in ("/", "#", "@", "!"):

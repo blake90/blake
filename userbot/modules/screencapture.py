@@ -9,13 +9,14 @@
 import io
 import traceback
 from selenium import webdriver
-from time import sleep
+from asyncio import sleep
 from selenium.webdriver.chrome.options import Options
-from userbot.events import register
+from userbot.events import register, errors_handler
 from userbot import GOOGLE_CHROME_BIN, CHROME_DRIVER, CMD_HELP
 
 
 @register(pattern=r".screencapture (.*)", outgoing=True)
+@errors_handler
 async def capture(url):
     """ For .screencapture command, capture a website and send the photo. """
     if not url.text[0].isalpha() and url.text[0] not in ("/", "#", "@", "!"):
@@ -36,9 +37,9 @@ async def capture(url):
             driver.get(input_str)
             height = driver.execute_script("return Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);")
             width = driver.execute_script("return Math.max(document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth);")
-            driver.set_window_size(width + 100, height + 100)
-            await url.edit("Generating screenshot of the page...")
-            sleep(5)
+            driver.set_window_size(width + 125, height + 125)
+            await url.edit("`Generating screenshot of the page...`")
+            await sleep(5)
             im_png = driver.get_screenshot_as_png()
             # saves screenshot of entire page
             driver.close()
@@ -47,7 +48,7 @@ async def capture(url):
                 message_id = url.reply_to_msg_id
             with io.BytesIO(im_png) as out_file:
                 out_file.name = "screencapture.png"
-                await url.edit("Uploading screenshot as file..")
+                await url.edit("`Uploading screenshot as file..`")
                 await url.client.send_file(
                     url.chat_id,
                     out_file,

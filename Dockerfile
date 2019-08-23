@@ -88,4 +88,6 @@ RUN sudo pip3 install -r requirements.txt
 ADD . /home/userbot/userbot
 RUN sudo chown -R userbot /home/userbot/userbot
 RUN sudo chmod -R 777 /home/userbot/userbot
+RUN sudo chmod -R 775 /usr/lib/python3.7/site-packages/
+ENTRYPOINT ["sudo /bin/sh","-c"]
 CMD ["python3","-m","userbot"]

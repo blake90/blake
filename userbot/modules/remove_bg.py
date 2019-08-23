@@ -4,12 +4,13 @@
 import io
 import os
 import requests
-from userbot.events import register
+from userbot.events import register, errors_handler
 from telethon.tl.types import MessageMediaPhoto
 from userbot import CMD_HELP, REM_BG_API_KEY, TEMP_DOWNLOAD_DIRECTORY
 
 
 @register(outgoing=True, pattern="^.rbg(?: |$)(.*)")
+@errors_handler
 async def kbg(remob):
     """ For .rbg command, Remove Image Background. """
     if not remob.text[0].isalpha() and remob.text[0] not in ("/", "#", "@", "!"):
@@ -29,7 +30,7 @@ async def kbg(remob):
                         TEMP_DOWNLOAD_DIRECTORY
                     )
                     await remob.edit("`Removing background from this image..`")
-                    output_file_name = ReTrieveFile(downloaded_file_name)
+                    output_file_name = await ReTrieveFile(downloaded_file_name)
                     os.remove(downloaded_file_name)
                 else:
                     await remob.edit("`How do I remove the background from this ?`")
@@ -38,7 +39,7 @@ async def kbg(remob):
                 return
         elif input_str:
             await remob.edit(f"`Removing background from online image hosted at`\n{input_str}")
-            output_file_name = ReTrieveURL(input_str)
+            output_file_name = await ReTrieveURL(input_str)
         else:
             await remob.edit("`I need something to remove the background from.`")
             return
@@ -60,7 +61,7 @@ async def kbg(remob):
 
 # this method will call the API, and return in the appropriate format
 # with the name provided.
-def ReTrieveFile(input_file_name):
+async def ReTrieveFile(input_file_name):
     headers = {
         "X-API-Key": REM_BG_API_KEY,
     }
@@ -77,7 +78,7 @@ def ReTrieveFile(input_file_name):
     return r
 
 
-def ReTrieveURL(input_url):
+async def ReTrieveURL(input_url):
     headers = {
         "X-API-Key": REM_BG_API_KEY,
     }
@@ -95,6 +96,6 @@ def ReTrieveURL(input_url):
 
 
 CMD_HELP.update({
-    "remove_bg": ".rbg <Link to Image> or reply to any image\
+    "remove_bg": ".rbg <Link to Image> or reply to any image (does not work on stickers.)\
 \nUsage: Removes the background of images, using remove.bg API"
 })

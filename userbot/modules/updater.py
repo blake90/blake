@@ -14,7 +14,7 @@ from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError, NoSuchPathError
 
 from userbot import CMD_HELP
-from userbot.events import register
+from userbot.events import register, errors_handler
 
 async def gen_chlog(repo, diff):
     ch_log = ''
@@ -31,6 +31,7 @@ async def is_off_br(br):
     return
 
 @register(outgoing=True, pattern="^.update(?: |$)(.*)")
+@errors_handler
 async def upstream(ups):
     "For .update command, check if the bot is up to date, update if specified"
     if not ups.text[0].isalpha() and ups.text[0] not in (
@@ -71,7 +72,7 @@ async def upstream(ups):
         changelog = await gen_chlog(repo, f'HEAD..upstream/{ac_br}')
 
         if not changelog:
-            await ups.edit(f'\n`Your BOT is`  **up-to-date**  `with`  **{ac_br}**\n')
+            await ups.edit(f'\n`Your BOT is` **up-to-date** `with` **{ac_br}**\n')
             return
 
         if conf != "now":
@@ -104,13 +105,12 @@ async def upstream(ups):
         execl(sys.executable, sys.executable, *sys.argv)
         # Shut the existing one down
         exit()
-        
+
 
 
 CMD_HELP.update({
     'update': ".update\
 \nUsage: Checks if the main userbot repository has any updates and shows a changelog if so.\
 \n\n.update now\
-\nUsage: Updates your userbot, if there are any updates in the main userbot repository.\
-\n\nNote: If you are using Heroku, please don't use `.update now` as it won't work."
+\nUsage: Updates your userbot, if there are any updates in the main userbot repository."
 })
